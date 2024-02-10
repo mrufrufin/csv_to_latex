@@ -69,9 +69,9 @@ if args.vert == True:
     for i,h in enumerate(header):
         h_p = re.sub(r'_', ' ', h)
         if args.capheader == True:
-            rstr += h_p.title()
+            rstr += f"\\textbf{{{h_p.title()}}}"
         else:
-            rstr += h_p
+            rstr += f"\\textbf{{{h_p}}}"
         if i != (num_col - 1):
             rstr += " & "
 else:
