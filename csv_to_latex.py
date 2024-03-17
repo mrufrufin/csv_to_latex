@@ -13,9 +13,9 @@ parser.add_argument("-i", "--input", type=str, default=DEFINF, help="input file"
 parser.add_argument("-v", "--vert", type=strtobool, default=True, help="vertical")
 parser.add_argument("-s", "--save", type=strtobool, default=True, help="to save")
 parser.add_argument("-st", "--subtable", type=strtobool, default=False, help="make as subtable")
-parser.add_argument("--entrypos", type=str, default="l", help="entry position (l,c,r)")
-parser.add_argument("--center", type=strtobool, default=True, help="center table")
-parser.add_argument("--capheader", type=strtobool, default=True, help="capitalize header")
+parser.add_argument("-ep", "--entrypos", type=str, default="l", help="entry position (l,c,r)")
+parser.add_argument("-c", "--center", type=strtobool, default=True, help="center table")
+parser.add_argument("-ch", "--capheader", type=strtobool, default=True, help="capitalize header")
 
 args = parser.parse_args()
 tabwidth = 0.5
