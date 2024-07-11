@@ -5,17 +5,44 @@ import os
 import re
 from distutils.util import strtobool
 
+num_matcher = re.compile(r"\-?((\d+)(\.\d*)?(e?\d+)?)")
+
+def is_float(ipt):
+    ret = False
+    res = num_matcher.search(ipt)
+    if res != None:
+        startpos, endpos = res.span()
+        if (endpos - startpos) == len(ipt):
+            ret = True
+    return ret
+
+
+
+def format_poss_float(ipt, prec = -1):
+    to_ff = False
+    if prec >= 0:
+        to_ff =True
+    ret = ""
+    cur_is_float = is_float(ipt)
+    if cur_is_float == True and to_ff == True:
+        ret = str(round(float(ipt), prec))
+    else:
+        ret = ipt
+    return ret
+
+
 FDIR = os.path.split(__file__)[0]
 DEFOUTF = os.path.join(FDIR, "out.txt")
 DEFINF = os.path.join(FDIR, "in.csv")
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--input", type=str, default=DEFINF, help="input file")
 parser.add_argument("-v", "--vert", type=strtobool, default=True, help="vertical")
-parser.add_argument("-s", "--save", type=strtobool, default=True, help="to save")
+parser.add_argument("-s", "--save", type=strtobool, default=False, help="to save")
 parser.add_argument("-st", "--subtable", type=strtobool, default=False, help="make as subtable")
 parser.add_argument("-ep", "--entrypos", type=str, default="l", help="entry position (l,c,r)")
 parser.add_argument("-c", "--center", type=strtobool, default=True, help="center table")
 parser.add_argument("-ch", "--capheader", type=strtobool, default=True, help="capitalize header")
+parser.add_argument("-f", "--precision", type=int, default=-1, help="float precision")
 
 args = parser.parse_args()
 tabwidth = 0.5
@@ -24,7 +51,7 @@ fname = os.path.splitext(infile)[0]
 outfile = fname + ".txt"
 fname_p = re.sub(r'_', ' ', fname).title()
 rstr = ""
-
+prec = args.precision
 header = []
 res = {}
 with open(infile, 'r', newline='') as csvr:
@@ -83,7 +110,9 @@ if args.vert == True:
         for j in range(num_col):
             cur_col = header[j]
             cur_entry = re.sub(r'_', "\_", res[cur_col][i])
-            rstr += f"{cur_entry} "
+            #cur_entry2 = re.sub(r'%', "\%", cur_entry)
+            cur_entry2 = format_poss_float(re.sub(r'%', '\%', cur_entry), prec=prec)
+            rstr += f"{cur_entry2} "
             if j == (num_col - 1):
                 rstr += "\\\\ \n"
             else:
@@ -99,7 +128,9 @@ else:
         rstr += f"{cur_col_p} "
         for j in range(num_rows):
             cur_entry = re.sub(r'_', '\_', res[cur_col][j])
-            rstr += f"& {cur_entry}"
+            cur_entry2 = format_poss_float(re.sub(r'%', '\%', cur_entry), prec=prec)
+
+            rstr += f"& {cur_entry2}"
         rstr += " \\\\ \n"
         if i == (num_col - 1):
             rstr += "\\bottomrule\n"
