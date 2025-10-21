@@ -25,7 +25,8 @@ def format_poss_float(ipt, prec = -1):
     ret = ""
     cur_is_float = is_float(ipt)
     if cur_is_float == True and to_ff == True:
-        ret = str(round(float(ipt), prec))
+        ret = round(float(ipt), prec)
+        ret = f'{ret:.{prec}f}'
     else:
         ret = ipt
     return ret
